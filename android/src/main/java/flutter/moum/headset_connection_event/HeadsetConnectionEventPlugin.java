@@ -66,8 +66,8 @@ public class HeadsetConnectionEventPlugin implements FlutterPlugin, MethodCallHa
         filter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
         flutterPluginBinding.getApplicationContext().registerReceiver(hReceiver, filter);
 
-        audioManager = (AudioManager)flutterPluginBinding.getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
-        currentState = getConnectedHeadset(audioManager) ? 1: 0;
+        audioManager = (AudioManager) flutterPluginBinding.getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+        currentState = getConnectedHeadset(audioManager) ? 1 : 0;
     }
 
     private boolean getConnectedHeadset(AudioManager audioManager) {
@@ -91,8 +91,10 @@ public class HeadsetConnectionEventPlugin implements FlutterPlugin, MethodCallHa
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
         if (call.method.equals("getCurrentState")) {
-            currentState = getConnectedHeadset(audioManager) ? 1: 0;
+            currentState = getConnectedHeadset(audioManager) ? 1 : 0;
             result.success(currentState);
+        } else if (call.method.equals("changeToHeadphones")) {
+            result.success(changeToHeadphones());
         } else {
             result.notImplemented();
         }
@@ -101,5 +103,13 @@ public class HeadsetConnectionEventPlugin implements FlutterPlugin, MethodCallHa
     @Override
     public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
         channel.setMethodCallHandler(null);
+    }
+
+    private boolean changeToHeadphones() {
+        audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
+        audioManager.stopBluetoothSco();
+        audioManager.setBluetoothScoOn(false);
+        audioManager.setSpeakerphoneOn(false);
+        return true;
     }
 }

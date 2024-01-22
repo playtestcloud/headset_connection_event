@@ -54,6 +54,10 @@ class HeadsetEvent {
     }
   }
 
+  Future<bool?> get changeToHeadphones async {
+    return _channel.invokeMethod<bool?>('changeToHeadphones');
+  }
+
   Future<bool> requestPermission() async {
     if (!Platform.isAndroid) {
       return true;
