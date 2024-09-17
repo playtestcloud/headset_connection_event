@@ -19,37 +19,12 @@ public class SwiftHeadsetConnectionEventPlugin: NSObject, FlutterPlugin {
         if (call.method == "getCurrentState"){
             result(HeadsetIsConnect())
         }
-        if (call.method == "changeToHeadphones"){
-            result(changeToHeadphones())
-        }
     }
     
     public override init() {
         super.init()
         registerAudioRouteChangeBlock()
     }
-    
-    private func changeToHeadphones() -> Bool {
-        return changeByPortType([AVAudioSession.Port.headsetMic])
-    }
-    
-    private func changeByPortType(_ ports:[AVAudioSession.Port]) -> Bool{
-            let currentRoute = AVAudioSession.sharedInstance().currentRoute
-            for output in currentRoute.outputs {
-                if(ports.firstIndex(of: output.portType) != nil){
-                    return true;
-                }
-            }
-            if let inputs = AVAudioSession.sharedInstance().availableInputs {
-                for input in inputs {
-                    if(ports.firstIndex(of: input.portType) != nil){
-                        try?AVAudioSession.sharedInstance().setPreferredInput(input);
-                        return true;
-                    }
-                 }
-            }
-            return false;
-        }
     
     // AVAudioSessionRouteChange notification is Detaction Headphone connection status
     //(https://developer.apple.com/documentation/avfoundation/avaudiosession/responding_to_audio_session_route_changes)
